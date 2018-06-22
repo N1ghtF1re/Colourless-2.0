@@ -27,7 +27,7 @@ dx = WIDTH/2
 dy = HEIGHT/2
 r = 140
 r0 = 20 # радиус вершины
-n = 10 # //VertexCount
+n = len(adjMatrix) # //VertexCount
 
 
 root = Tk()
@@ -49,10 +49,12 @@ def plotEdge(i,j):
     y2 = r*sin( 2*pi*j/n - pi/2 ) + dy
     canvas.create_line(x1,y1,x2,y2)
 
-plotEdge(5,3)
-plotEdge(0,8)
-plotEdge(8,3)
-plotEdge(7,3)
+
+for index, row in enumerate(adjMatrix):
+    for col in row: # row = [1,2,3], index = 0
+        if adjMatrix[index][col] == 1:
+            plotEdge(index,col)
+
 
 for v in range(0,n):
     plotVertex(v);

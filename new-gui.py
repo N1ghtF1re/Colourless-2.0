@@ -17,12 +17,11 @@ kek = '''1 : 2 3 4
 10 : 6 8 11
 11 : 6 10 12
 12 : 7 9 11'''
-
+currI = None
 adjMatrix = parseAdjMatrix(kek)
 print(adjMatrix)
 HEIGHT = 600
 WIDTH = 600
-
 d = 5
 r = 200
 r0 = 60 # радиус вершины
@@ -58,7 +57,7 @@ class ColourlessWindow(QWidget):
 
 
     def initUI(self):
-        position = None;
+        position = None
         self.setGeometry(308, 300 , WIDTH, HEIGHT)
         self.setWindowTitle('SuperKekB')
         self.InitVertex()
@@ -107,6 +106,8 @@ class ColourlessWindow(QWidget):
                     self.plotEdge(qp,i,j)
 
     def mousePressEvent(self, event):
+        global currI
+        currI = None
         for index, vert in enumerate(vertexArr):
             x = event.pos().x()
             position = event.pos()
@@ -115,12 +116,14 @@ class ColourlessWindow(QWidget):
             AbsoluteVert = RelativeToAbsolute(size,vert)
             r_xy = sqrt((AbsoluteVert['x'] - x)**2 + (AbsoluteVert['y'] - y)**2)
             if r_xy <= r0/2:
+                currI = index
                 print(x,y,vert)
+                print(currI)
                 if event.button() == Qt.RightButton:
                     vert['color'] = '#000000'
                 else:
                     vert['color'] = '#ff0000'
-                print(index)
+
 
         self.update()
         #print(event.pos().x())
@@ -128,16 +131,13 @@ class ColourlessWindow(QWidget):
     def mouseMoveEvent (self,event):
         x = event.pos().x()
         y = event.pos().y()
-        print(x,y)
-        for index, vert in enumerate(vertexArr):
-            size = self.size()
-            AbsoluteVert = RelativeToAbsolute(size,vert)
-            r_xy = sqrt((AbsoluteVert['x'] - x)**2 + (AbsoluteVert['y'] - y)**2)
-            if r_xy <= r0/2:
-                newCoords={'x':x, 'y':y}
-                newCoords = AbsoulteToRelative(size,newCoords)
-                vert['x'] = newCoords['x']
-                vert['y'] = newCoords['y']
+        size = self.size()
+        print(currI)
+        if currI != None:
+            newCoords={'x':x, 'y':y}
+            newCoords = AbsoulteToRelative(size,newCoords)
+            vertexArr[currI]['x'] = newCoords['x']
+            vertexArr[currI]['y'] = newCoords['y']
 
         self.update()
 

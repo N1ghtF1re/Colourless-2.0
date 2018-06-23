@@ -46,7 +46,9 @@ def calcCoords(size, i):
 def RelativeToAbsolute(size, coords):
     center = calcCenter(size)
     return {'x':coords['x'] + center['x'], 'y':coords['y'] + center['y']}
-
+def AbsoulteToRelative(size,coords):
+    center = calcCenter(size)
+    return {'x':coords['x'] - center['x'], 'y':coords['y'] - center['y']}
 
 class ColourlessWindow(QWidget):
 
@@ -123,10 +125,21 @@ class ColourlessWindow(QWidget):
         self.update()
         #print(event.pos().x())
         #print(vertexArr)
-    #def mouseMoveEvent (self,event):
-    #    drag = QtGui.QDrag(self)
+    def mouseMoveEvent (self,event):
+        x = event.pos().x()
+        y = event.pos().y()
+        print(x,y)
+        for index, vert in enumerate(vertexArr):
+            size = self.size()
+            AbsoluteVert = RelativeToAbsolute(size,vert)
+            r_xy = sqrt((AbsoluteVert['x'] - x)**2 + (AbsoluteVert['y'] - y)**2)
+            if r_xy <= r0/2:
+                newCoords={'x':x, 'y':y}
+                newCoords = AbsoulteToRelative(size,newCoords)
+                vert['x'] = newCoords['x']
+                vert['y'] = newCoords['y']
 
-
+        self.update()
 
 
 if __name__ == '__main__':

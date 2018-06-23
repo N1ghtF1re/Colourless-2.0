@@ -13,7 +13,7 @@ kek = '''1 : 2 3 4
 4 : 1 5 6
 5 : 2 3 4
 6 : 2 3 4'''
-#kek2 = lotOfTrash[random.randInt(3)]
+kek2 = lotOfTrash[random.randint(1,3)]
 currI = None
 adjMatrix = parseAdjMatrix(kek)
 
@@ -129,8 +129,7 @@ class ColourlessWindow(QWidget):
 
 
         self.update()
-        #print(event.pos().x())
-        #print(vertexArr)
+
     def mouseMoveEvent (self,event):
         x = event.pos().x()
         y = event.pos().y()

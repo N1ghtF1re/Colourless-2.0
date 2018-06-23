@@ -19,14 +19,6 @@ kek = '''1 : 2 3 4
 
 adjMatrix = parseAdjMatrix(kek)
 
-HEIGHT = 600
-WIDTH = 600
-
-d = 5
-dx = WIDTH/2
-dy = HEIGHT/2
-r = 140
-r0 = 20 # радиус вершины
 n = len(adjMatrix) # //VertexCount
 
 

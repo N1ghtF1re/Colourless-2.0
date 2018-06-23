@@ -39,7 +39,7 @@ def plotVertex(i):
     x = r*cos( 2*pi*i/n - pi/2 ) + dx
     y = r*sin( 2*pi*i/n - pi/2 ) + dy
     #circle( x,y,r0 )
-    canvas.create_oval(x-r0,y-r0,x+r0,y+r0, fill='green')
+    k = canvas.create_oval(x-r0,y-r0,x+r0,y+r0, fill='green', width=0)
 
 
 def plotEdge(i,j):
@@ -47,7 +47,7 @@ def plotEdge(i,j):
     y1 = r*sin( 2*pi*i/n - pi/2 ) + dy
     x2 = r*cos( 2*pi*j/n - pi/2 ) + dx
     y2 = r*sin( 2*pi*j/n - pi/2 ) + dy
-    canvas.create_line(x1,y1,x2,y2)
+    canvas.create_line(x1,y1,x2,y2, width=3)
 
 
 for index, row in enumerate(adjMatrix):

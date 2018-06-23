@@ -96,10 +96,10 @@ class ColourlessWindow(QWidget):
         qp.drawLine(coords['x1'],coords['y1'],coords['x2'],coords['y2'])
 
     def DrawLines(self,qp):
-        for index, row in enumerate(adjMatrix):
-            for col in row: # row = [1,2,3], index = 0
-                if adjMatrix[index][col] == 1:
-                    self.plotEdge(qp,index,col)
+        for i, row in enumerate(adjMatrix):
+            for j, col in enumerate(row): # row = [1,2,3], index = 0
+                if adjMatrix[i][j] == 1:
+                    self.plotEdge(qp,i,j)
 
     def mousePressEvent(self, event):
         for index, vert in enumerate(vertexArr):

@@ -24,7 +24,6 @@ HEIGHT = 600
 WIDTH = 600
 
 d = 5
-position = None;
 r = 200
 r0 = 60 # радиус вершины
 n = len(adjMatrix) # //VertexCount
@@ -57,6 +56,7 @@ class ColourlessWindow(QWidget):
 
 
     def initUI(self):
+        position = None;
         self.setGeometry(308, 300 , WIDTH, HEIGHT)
         self.setWindowTitle('SuperKekB')
         self.InitVertex()
@@ -70,20 +70,20 @@ class ColourlessWindow(QWidget):
         self.drawVertex(qp)
         qp.end()
 
-    def InitVertex(self):
-        size = self.size()
+    def InitVertex(self): # Первоначальное расположение вершин
+        size = self.size() # Размер окна
         for v in range(0,n):
-            coord = calcCoords(size, v);
-            vertexArr[v]['x'] = coord['x'] + r0 // 2
+            coord = calcCoords(size, v); # Получение координат (относительно центра) расположения вершины на окружности
+            vertexArr[v]['x'] = coord['x'] + r0 // 2 # vertexArr - список координат вершин
             vertexArr[v]['y'] = coord['y'] + r0 // 2
 
-    def drawVertex(self, qp):
+    def drawVertex(self, qp): # Отрисовка вершин при перерисовке окна
         col = QColor(0, 0, 0)
         col.setNamedColor('#000')
         pen = QPen(col, 1)
         qp.setPen(pen)
         size = self.size()
-        for v in range(0,n):
+        for v in range(0,n): # n - количетсво вершин
             qp.setBrush(QColor(vertexArr[v]['color']))
             coords = vertexArr[v]
             coords = RelativeToAbsolute(size, coords)
@@ -107,6 +107,7 @@ class ColourlessWindow(QWidget):
     def mousePressEvent(self, event):
         for index, vert in enumerate(vertexArr):
             x = event.pos().x()
+            position = event.pos()
             y = event.pos().y()
             size = self.size()
             AbsoluteVert = RelativeToAbsolute(size,vert)
@@ -123,7 +124,8 @@ class ColourlessWindow(QWidget):
         #print(event.pos().x())
         #print(vertexArr)
     #def mouseMoveEvent (self,event):
-    #     drag = QtGui.QDrag(self)
+    #    drag = QtGui.QDrag(self)
+
 
 
 

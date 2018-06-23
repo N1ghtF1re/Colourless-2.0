@@ -1,9 +1,12 @@
 def parseAdjMatrix(kek):
     OldList = kek.split('\n') # ['1 : 2 3 4', '2 : 1 5 6', '3 : 1 5 6', '4 : 1 5 6', '5 : 2 3 4']
     newList = [];
+    print('kek')
     for row in OldList:
-        row = row[4:]
+        start = row.find(':') + 2
+        row = row[start:]
         ListMem = row.split(' ')
+        print(ListMem)
         for i, s in enumerate(ListMem):
             ListMem[i] = int(s) - 1;
         newList.append(ListMem)

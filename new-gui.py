@@ -6,14 +6,20 @@ from VertParser import parseAdjMatrix
 from math import *
 
 kek = '''1 : 2 3 4
-2 : 1 5 6
-3 : 1 5 6
-4 : 1 5 6
-5 : 2 3 4
-6 : 2 3 4'''
+2 : 1 3 5
+3 : 1 2 6
+4 : 1 7 8
+5 : 2 7 9
+6 : 3 10 11
+7 : 4 5 12
+8 : 4 9 10
+9 : 5 8 12
+10 : 6 8 11
+11 : 6 10 12
+12 : 7 9 11'''
 
 adjMatrix = parseAdjMatrix(kek)
-
+print(adjMatrix)
 HEIGHT = 600
 WIDTH = 600
 
@@ -70,8 +76,9 @@ class ColourlessWindow(QWidget):
 
     def drawVertex(self, qp):
         col = QColor(0, 0, 0)
-        col.setNamedColor('#d4d4d4')
-        qp.setPen(col)
+        col.setNamedColor('#000')
+        pen = QPen(col, 1)
+        qp.setPen(pen)
         size = self.size()
         for v in range(0,n):
             coord = calcCoords(size, v);
@@ -82,6 +89,9 @@ class ColourlessWindow(QWidget):
 
     def plotEdge(self, qp, i,j):
         size = self.size()
+        col = QColor(0, 0, 0)
+        col.setNamedColor('#000')
+        pen = QPen(col, 8)
         coords = calcLineCoords(size,i, j)
         qp.drawLine(coords['x1'],coords['y1'],coords['x2'],coords['y2'])
 

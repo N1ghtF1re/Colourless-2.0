@@ -24,7 +24,7 @@ HEIGHT = 600
 WIDTH = 600
 
 d = 5
-
+position = None;
 r = 200
 r0 = 60 # радиус вершины
 n = len(adjMatrix) # //VertexCount
@@ -40,19 +40,14 @@ def calcCoords(size, i):
     center = calcCenter(size);
     dx = center['x']
     dy = center['y']
-    x = r*cos( 2*pi*i/n - pi/2 ) + dx - r0/2
-    y = r*sin( 2*pi*i/n - pi/2 ) + dy - r0/2
+    x = r*cos( 2*pi*i/n - pi/2 ) - r0/2
+    y = r*sin( 2*pi*i/n - pi/2 ) - r0/2
     return {'x': x, 'y': y}
 
-def calcLineCoords(size, i, j):
-    center = calcCenter(size);
-    dx = center['x']
-    dy = center['y']
-    x1 = r*cos( 2*pi*i/n - pi/2 ) + dx
-    y1 = r*sin( 2*pi*i/n - pi/2 ) + dy
-    x2 = r*cos( 2*pi*j/n - pi/2 ) + dx
-    y2 = r*sin( 2*pi*j/n - pi/2 ) + dy
-    return {'x1' :x1, 'y1' : y1, 'x2':x2, 'y2': y2}
+def RelativeToAbsolute(size, coords):
+    center = calcCenter(size)
+    return {'x':coords['x'] + center['x'], 'y':coords['y'] + center['y']}
+
 
 class ColourlessWindow(QWidget):
 
@@ -63,7 +58,8 @@ class ColourlessWindow(QWidget):
 
     def initUI(self):
         self.setGeometry(308, 300 , WIDTH, HEIGHT)
-        self.setWindowTitle('Points')
+        self.setWindowTitle('SuperKekB')
+        self.InitVertex()
         self.show()
 
 
@@ -74,6 +70,13 @@ class ColourlessWindow(QWidget):
         self.drawVertex(qp)
         qp.end()
 
+    def InitVertex(self):
+        size = self.size()
+        for v in range(0,n):
+            coord = calcCoords(size, v);
+            vertexArr[v]['x'] = coord['x'] + r0 // 2
+            vertexArr[v]['y'] = coord['y'] + r0 // 2
+
     def drawVertex(self, qp):
         col = QColor(0, 0, 0)
         col.setNamedColor('#000')
@@ -81,19 +84,19 @@ class ColourlessWindow(QWidget):
         qp.setPen(pen)
         size = self.size()
         for v in range(0,n):
-            coord = calcCoords(size, v);
-            vertexArr[v]['x'] = coord['x'] + r0 // 2
-            vertexArr[v]['y'] = coord['y'] + r0 // 2
             qp.setBrush(QColor(vertexArr[v]['color']))
-            qp.drawEllipse(coord['x'], coord['y'], r0, r0)
+            coords = vertexArr[v]
+            coords = RelativeToAbsolute(size, coords)
+            coords['x'] -= r0 // 2
+            coords['y'] -= r0 // 2
+
+            qp.drawEllipse(coords['x'], coords['y'], r0, r0)
 
     def plotEdge(self, qp, i,j):
         size = self.size()
-        col = QColor(0, 0, 0)
-        col.setNamedColor('#000')
-        pen = QPen(col, 8)
-        coords = calcLineCoords(size,i, j)
-        qp.drawLine(coords['x1'],coords['y1'],coords['x2'],coords['y2'])
+        coords1 =  RelativeToAbsolute(size,vertexArr[i])
+        coords2 = RelativeToAbsolute(size,vertexArr[j])
+        qp.drawLine(coords1['x'],coords1['y'], coords2['x'],coords2['y'])
 
     def DrawLines(self,qp):
         for i, row in enumerate(adjMatrix):
@@ -105,7 +108,9 @@ class ColourlessWindow(QWidget):
         for index, vert in enumerate(vertexArr):
             x = event.pos().x()
             y = event.pos().y()
-            r_xy = sqrt((vert['x'] - x)**2 + (vert['y'] - y)**2)
+            size = self.size()
+            AbsoluteVert = RelativeToAbsolute(size,vert)
+            r_xy = sqrt((AbsoluteVert['x'] - x)**2 + (AbsoluteVert['y'] - y)**2)
             if r_xy <= r0/2:
                 print(x,y,vert)
                 if event.button() == Qt.RightButton:
@@ -113,9 +118,14 @@ class ColourlessWindow(QWidget):
                 else:
                     vert['color'] = '#ff0000'
                 print(index)
+
         self.update()
         #print(event.pos().x())
         #print(vertexArr)
+    #def mouseMoveEvent (self,event):
+    #     drag = QtGui.QDrag(self)
+
+
 
 if __name__ == '__main__':
 

@@ -13,31 +13,29 @@ kek = '''1 : 2 3 4
 4 : 1 5 6
 5 : 2 3 4
 6 : 2 3 4'''
+
 kek2 = lotOfTrash[random.randint(1,3)]
-currI = None
 adjMatrix = parseAdjMatrix(kek)
 
 n = len(adjMatrix) # //VertexCount
 
 vertexArr = [{'x':0, 'y':0, 'color':Color_Blue} for i in range(0,n)]
 
-def calcCenter(size):
+def calcCenter(size): # Вычисление координат центра окна
     dx = size.width()/2
     dy = size.height()/2
     return {'x':dx, 'y': dy}
-
-def calcCoords(size, i):
+def calcCoords(size, i): # Вычисление коориднат i-ой вершины по окружности
     center = calcCenter(size);
     dx = center['x']
     dy = center['y']
     x = r*cos( 2*pi*i/n - pi/2 ) - r0/2
     y = r*sin( 2*pi*i/n - pi/2 ) - r0/2
     return {'x': x, 'y': y}
-
-def RelativeToAbsolute(size, coords):
+def RelativeToAbsolute(size, coords): # Перевод из относительных (относительно центра) в абсолютные координаты
     center = calcCenter(size)
     return {'x':coords['x'] + center['x'], 'y':coords['y'] + center['y']}
-def AbsoulteToRelative(size,coords):
+def AbsoulteToRelative(size,coords): # Перевод из абсполютных в относительные координаты
     center = calcCenter(size)
     return {'x':coords['x'] - center['x'], 'y':coords['y'] - center['y']}
 
@@ -49,31 +47,29 @@ class ColourlessWindow(QWidget):
 
 
     def initUI(self):
-        position = None
         self.btnApply = QPushButton("Я сделалъ", self)
         self.btnApply.clicked.connect(self.buttonClicked)
-
+        self.CurrI = None; # Номер вершины, по которой кликнул пользователь (для перетаскивания)
         self.setGeometry(308, 300 , WIDTH, HEIGHT)
         self.setWindowTitle('SuperKekB')
         self.InitVertex()
         self.show()
 #superKekB
 
-    def paintEvent(self, e):
+    def paintEvent(self, e): # Событие перерисовки окна
         qp = QPainter()
         qp.begin(self)
-        self.DrawLines(qp)
-        self.drawVertex(qp)
-        self.MoveButton(qp)
+        self.DrawLines(qp) # Отрисовка ребер
+        self.drawVertex(qp) # Отрисовка вершин
+        self.MoveButton(qp) # Перемещение кнопки в правый нижний угол
         qp.end()
 
-    def MoveButton(self, qp):
-
+    def MoveButton(self, qp): # Перемещение кнопки в правый нижний угол
         y = self.size().height() -  self.btnApply.size().height() - Padding
         x = self.size().width() - self.btnApply.size().width() - Padding
         self.btnApply.move(x,y)
 
-    def buttonClicked(self):
+    def buttonClicked(self): # При клике на кнопку - проверка раскраски
         print(checkFinished(vertexArr, adjMatrix))
 
     def InitVertex(self): # Первоначальное расположение вершин
@@ -91,28 +87,27 @@ class ColourlessWindow(QWidget):
         size = self.size()
         for v in range(0,n): # n - количетсво вершин
             qp.setBrush(QColor(vertexArr[v]['color']))
-            coords = vertexArr[v]
-            coords = RelativeToAbsolute(size, coords)
+            coords = vertexArr[v] # В vertexArr - координаты вершины
+            coords = RelativeToAbsolute(size, coords) # переводим относительные в абсолютные координаты
             coords['x'] -= r0 // 2
             coords['y'] -= r0 // 2
 
-            qp.drawEllipse(coords['x'], coords['y'], r0, r0)
+            qp.drawEllipse(coords['x'], coords['y'], r0, r0) # Отрисовываем вершину
 
     def plotEdge(self, qp, i,j):
         size = self.size()
-        coords1 =  RelativeToAbsolute(size,vertexArr[i])
-        coords2 = RelativeToAbsolute(size,vertexArr[j])
-        qp.drawLine(coords1['x'],coords1['y'], coords2['x'],coords2['y'])
+        coords1 =  RelativeToAbsolute(size,vertexArr[i]) # Переводим координаты двух вершин
+        coords2 = RelativeToAbsolute(size,vertexArr[j]) # в абсолютные
+        qp.drawLine(coords1['x'],coords1['y'], coords2['x'],coords2['y']) # соединяем две вершины линиями
 
     def DrawLines(self,qp):
-        for i, row in enumerate(adjMatrix):
-            for j, col in enumerate(row): # row = [1,2,3], index = 0
+        for i, row in enumerate(adjMatrix): # adjMatrix - матрица смежности
+            for j, col in enumerate(row):
                 if adjMatrix[i][j] == 1:
                     self.plotEdge(qp,i,j)
 
     def mousePressEvent(self, event):
-        global currI
-        currI = None
+        self.currI = None
         for index, vert in enumerate(vertexArr):
             x = event.pos().x()
             position = event.pos()
@@ -121,7 +116,7 @@ class ColourlessWindow(QWidget):
             AbsoluteVert = RelativeToAbsolute(size,vert)
             r_xy = sqrt((AbsoluteVert['x'] - x)**2 + (AbsoluteVert['y'] - y)**2)
             if r_xy <= r0/2:
-                currI = index
+                self.currI = index
                 if event.button() == Qt.RightButton:
                     vert['color'] = Color_Black
                 else:
@@ -134,11 +129,11 @@ class ColourlessWindow(QWidget):
         x = event.pos().x()
         y = event.pos().y()
         size = self.size()
-        if currI != None:
+        if self.currI != None:
             newCoords={'x':x, 'y':y}
             newCoords = AbsoulteToRelative(size,newCoords)
-            vertexArr[currI]['x'] = newCoords['x']
-            vertexArr[currI]['y'] = newCoords['y']
+            vertexArr[self.currI]['x'] = newCoords['x']
+            vertexArr[self.currI]['y'] = newCoords['y']
         self.update()
 
 
